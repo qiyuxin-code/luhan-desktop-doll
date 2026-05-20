@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lu Han Desktop Doll</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles/luhan-svg-animations.css" />
+  </head>
+  <body>
+    <main class="desktop-stage">
+      <section class="pet-shell" aria-label="桌宠区域">
+        <button
+          class="pet-button"
+          id="petButton"
+          type="button"
+          aria-live="polite"
+          aria-label="鹿晗桌宠"
+        >
+          <div id="petPixiMount" class="pet-canvas-mount" role="img" aria-hidden="false"></div>
+        </button>
+        <button class="close-button" id="closeButton" type="button" aria-label="关闭桌宠">×</button>
+      </section>
+    </main>
+
+    <!-- 鹿晗 SVG 桌宠（DOM + CSS 动画）：npm run build:renderer / npm start -->
+    <script src="./pet-desktop.bundle.js"></script>
+  </body>
+</html>

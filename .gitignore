@@ -1,0 +1,6 @@
+node_modules/
+
+# Pixi + Spine bundle（npm start / npm run build:renderer 会生成）
+pet-desktop.bundle.js
+
+.DS_Store

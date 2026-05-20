@@ -1,0 +1,23 @@
+{
+  "name": "luhan-desktop-doll",
+  "version": "1.0.0",
+  "private": true,
+  "description": "鹿晗桌宠桌面应用",
+  "main": "main.js",
+  "scripts": {
+    "sort:export": "node scripts/sort-export-pngs.mjs",
+    "scan:export": "node scripts/sort-export-pngs.mjs && node scripts/scan-export-layers.mjs",
+    "build:renderer": "esbuild ./renderer/desktop-luhan-sprites.mjs --bundle --minify --outfile=./pet-desktop.bundle.js --format=iife --platform=browser",
+    "build:renderer:spine": "esbuild ./renderer/desktop-spine.mjs --bundle --minify --outfile=./pet-desktop.bundle.js --format=iife --platform=browser",
+    "normalize:spine": "node scripts/normalize-spine-json.mjs",
+    "start": "npm run build:renderer && electron ."
+  },
+  "devDependencies": {
+    "electron": "^35.7.5",
+    "esbuild": "^0.24.2"
+  },
+  "dependencies": {
+    "@esotericsoftware/spine-pixi-v8": "^4.3.1",
+    "pixi.js": "^8.18.1"
+  }
+}

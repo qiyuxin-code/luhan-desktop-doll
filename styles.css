@@ -1,0 +1,157 @@
+:root {
+  color-scheme: light;
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow: hidden;
+  background: transparent !important;
+}
+
+.desktop-stage {
+  position: relative;
+  min-height: 100vh;
+  background: transparent !important;
+}
+
+.pet-shell {
+  position: fixed;
+  right: 28px;
+  bottom: 20px;
+  width: 288px;
+  height: 288px;
+  min-width: 0;
+  user-select: none;
+  touch-action: none;
+  cursor: default;
+}
+.pet-shell.dragging {
+  cursor: grabbing;
+}
+
+.pet-button {
+  position: relative;
+  display: block;
+  width: 288px;
+  height: 288px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: grab;
+}
+.pet-canvas-mount,
+.pet-svg-stage {
+  position: relative;
+  display: block;
+  width: 288px;
+  height: 288px;
+  overflow: hidden;
+}
+
+/* 跳跃时允许画出 288 区域上方（需配合 main.js 窗口增高 JUMP_HEADROOM） */
+.pet-shell[data-state="jump"],
+.pet-shell[data-state="action-jump"] {
+  overflow: visible;
+}
+
+.pet-shell[data-state="jump"] .pet-button,
+.pet-shell[data-state="action-jump"] .pet-button {
+  overflow: visible;
+}
+
+.pet-shell[data-state="jump"] .pet-svg-stage,
+.pet-shell[data-state="action-jump"] .pet-svg-stage {
+  overflow: visible;
+}
+
+.desktop-app .desktop-stage {
+  overflow: visible;
+}
+
+.pet-canvas-mount canvas {
+  display: block;
+  margin: 0 auto;
+  width: 288px;
+  height: 288px;
+  filter: drop-shadow(0 16px 22px rgba(159, 109, 132, 0.22));
+  background: transparent !important;
+}
+
+.pet-svg-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+  filter: drop-shadow(0 16px 22px rgba(159, 109, 132, 0.22));
+}
+
+.pet-svg-layer svg {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+}
+
+.pet-load-error {
+  margin: 0;
+  padding: 12px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #5c3d4d;
+}
+
+.close-button {
+  position: fixed;
+  right: 2px;
+  bottom: 2px;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  font-size: 16px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  z-index: 20;
+}
+
+.desktop-app body {
+  background: transparent !important;
+}
+
+.desktop-app .desktop-stage {
+  min-height: 100vh;
+  background: transparent !important;
+}
+
+.desktop-app .pet-shell {
+  right: 0;
+  bottom: 0;
+  width: 288px;
+  height: 288px;
+}
+.desktop-app,
+.desktop-app body,
+.desktop-app .desktop-stage,
+.desktop-app .pet-button {
+  background: transparent !important;
+}
+
+@media (max-width: 720px) {
+  .pet-shell {
+    width: 288px;
+    height: 288px;
+    right: 16px;
+    bottom: 12px;
+  }
+}

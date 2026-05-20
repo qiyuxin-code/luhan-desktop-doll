@@ -1,0 +1,92 @@
+/* PNG 分层：body 替换 SVG 整图，details 仅动画零件 */
+
+.pet-layer-stack {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.pet-pose-body {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.pet-svg-backdrop {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+}
+
+/* 有 PNG body 时隐藏 SVG 内嵌整图，保留星星/泡泡等矢量 */
+.uses-png-body .pet-svg-backdrop svg > image {
+  visibility: hidden;
+}
+
+.pet-png-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  z-index: 2;
+  overflow: visible;
+}
+
+.pet-png-overlay:not(.is-playing) .pet-detail-layer {
+  animation: none !important;
+}
+
+.pet-png-overlay.is-playing .pet-detail-layer.detail-anim-brow {
+  animation: luhan-detail-brow 4.2s ease-in-out infinite;
+}
+
+.pet-png-overlay.is-playing .pet-detail-layer.detail-anim-brow[data-layer="face-brow-r"] {
+  animation-delay: 0.15s;
+}
+
+.pet-png-overlay.is-playing .pet-detail-layer.detail-anim-blink {
+  animation: luhan-detail-blink 5.5s ease-in-out infinite;
+}
+
+.pet-png-overlay.is-playing .pet-detail-layer.detail-anim-blink[data-layer="face-eye-r"] {
+  animation-delay: 0.08s;
+}
+
+@keyframes luhan-detail-brow {
+  0%,
+  88%,
+  100% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 0.88;
+  }
+  96% {
+    opacity: 1;
+  }
+}
+
+@keyframes luhan-detail-blink {
+  0%,
+  92%,
+  100% {
+    opacity: 1;
+  }
+  94% {
+    opacity: 0.12;
+  }
+  96% {
+    opacity: 1;
+  }
+}

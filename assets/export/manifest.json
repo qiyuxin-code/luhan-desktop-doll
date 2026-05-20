@@ -1,0 +1,150 @@
+{
+  "version": 4,
+  "generatedAt": "2026-05-20T07:58:12.202Z",
+  "layers": [
+    {
+      "file": "body/10_shadow.png",
+      "src": "./assets/export/body/10_shadow.png",
+      "z": 10,
+      "id": "shadow",
+      "poses": "*",
+      "role": "body"
+    },
+    {
+      "file": "body/20_hair-back.png",
+      "src": "./assets/export/body/20_hair-back.png",
+      "z": 20,
+      "id": "hair-back",
+      "poses": "*",
+      "role": "body"
+    },
+    {
+      "file": "body/30_body-legs.png",
+      "src": "./assets/export/body/30_body-legs.png",
+      "z": 30,
+      "id": "body-legs",
+      "poses": "*",
+      "role": "body"
+    },
+    {
+      "file": "body/40_arm-back.png",
+      "src": "./assets/export/body/40_arm-back.png",
+      "z": 40,
+      "id": "arm-back",
+      "poses": "*",
+      "role": "body"
+    },
+    {
+      "file": "body/50_body-upper.png",
+      "src": "./assets/export/body/50_body-upper.png",
+      "z": 50,
+      "id": "body-upper",
+      "poses": "*",
+      "role": "body"
+    },
+    {
+      "file": "body/60_neck.png",
+      "src": "./assets/export/body/60_neck.png",
+      "z": 60,
+      "id": "neck",
+      "poses": "*",
+      "role": "body"
+    },
+    {
+      "file": "body/70_head-base.png",
+      "src": "./assets/export/body/70_head-base.png",
+      "z": 70,
+      "id": "head-base",
+      "poses": "*",
+      "role": "body"
+    },
+    {
+      "file": "body/100_hair-front.png",
+      "src": "./assets/export/body/100_hair-front.png",
+      "z": 100,
+      "id": "hair-front",
+      "poses": "*",
+      "role": "body"
+    },
+    {
+      "file": "body/110_arm-front-l.png",
+      "src": "./assets/export/body/110_arm-front-l.png",
+      "z": 110,
+      "id": "arm-front-l",
+      "poses": "*",
+      "role": "body"
+    },
+    {
+      "file": "body/111_arm-front-r.png",
+      "src": "./assets/export/body/111_arm-front-r.png",
+      "z": 111,
+      "id": "arm-front-r",
+      "poses": "*",
+      "role": "body"
+    },
+    {
+      "file": "body/120_hand-l.png",
+      "src": "./assets/export/body/120_hand-l.png",
+      "z": 120,
+      "id": "hand-l",
+      "poses": "*",
+      "role": "body"
+    },
+    {
+      "file": "body/121_hand-r.png",
+      "src": "./assets/export/body/121_hand-r.png",
+      "z": 121,
+      "id": "hand-r",
+      "poses": "*",
+      "role": "body"
+    },
+    {
+      "file": "details/80_face-eye-l.png",
+      "src": "./assets/export/details/80_face-eye-l.png",
+      "z": 80,
+      "id": "face-eye-l",
+      "poses": "*",
+      "role": "detail"
+    },
+    {
+      "file": "details/81_face-eye-r.png",
+      "src": "./assets/export/details/81_face-eye-r.png",
+      "z": 81,
+      "id": "face-eye-r",
+      "poses": "*",
+      "role": "detail"
+    },
+    {
+      "file": "details/82_face-brow-l.png",
+      "src": "./assets/export/details/82_face-brow-l.png",
+      "z": 82,
+      "id": "face-brow-l",
+      "poses": "*",
+      "role": "detail"
+    },
+    {
+      "file": "details/83_face-brow-r.png",
+      "src": "./assets/export/details/83_face-brow-r.png",
+      "z": 83,
+      "id": "face-brow-r",
+      "poses": "*",
+      "role": "detail"
+    },
+    {
+      "file": "details/90_face-mouth.png",
+      "src": "./assets/export/details/90_face-mouth.png",
+      "z": 90,
+      "id": "face-mouth",
+      "poses": "*",
+      "role": "detail"
+    },
+    {
+      "file": "details/91_face-blush.png",
+      "src": "./assets/export/details/91_face-blush.png",
+      "z": 91,
+      "id": "face-blush",
+      "poses": "*",
+      "role": "detail"
+    }
+  ]
+}

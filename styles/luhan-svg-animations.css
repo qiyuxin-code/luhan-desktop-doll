@@ -1,0 +1,361 @@
+/* 复现 SVG 内 SMIL 动画（Chromium 不执行 <animate>，用 CSS 代替） */
+
+/* action-sing / sit3：星星闪烁 */
+.pet-shell[data-state="action-sing"] .pet-svg-layer.is-active .twinkle-star,
+.pet-shell[data-state="sit3"] .pet-svg-layer.is-active .twinkle-star {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.pet-shell[data-state="action-sing"] .pet-svg-layer.is-active .twinkle-star:nth-child(1) {
+  animation: luhan-twinkle-1 1.9s ease-in-out infinite;
+}
+.pet-shell[data-state="action-sing"] .pet-svg-layer.is-active .twinkle-star:nth-child(2) {
+  animation: luhan-twinkle-2 1.6s ease-in-out 0.35s infinite;
+}
+.pet-shell[data-state="action-sing"] .pet-svg-layer.is-active .twinkle-star:nth-child(3) {
+  animation: luhan-twinkle-3 1.7s ease-in-out 0.7s infinite;
+}
+.pet-shell[data-state="action-sing"] .pet-svg-layer.is-active .twinkle-star:nth-child(4) {
+  animation: luhan-twinkle-4 1.8s ease-in-out 0.95s infinite;
+}
+
+.pet-shell[data-state="sit3"] .pet-svg-layer.is-active .twinkle-star:nth-child(1) {
+  animation: luhan-sit3-twinkle-1 2.2s ease-in-out infinite;
+}
+.pet-shell[data-state="sit3"] .pet-svg-layer.is-active .twinkle-star:nth-child(2) {
+  animation: luhan-sit3-twinkle-2 1.8s ease-in-out 0.45s infinite;
+}
+.pet-shell[data-state="sit3"] .pet-svg-layer.is-active .twinkle-star:nth-child(3) {
+  animation: luhan-sit3-twinkle-3 1.9s ease-in-out 0.9s infinite;
+}
+.pet-shell[data-state="sit3"] .pet-svg-layer.is-active .twinkle-star:nth-child(4) {
+  animation: luhan-sit3-twinkle-4 2s ease-in-out 1.2s infinite;
+}
+
+@keyframes luhan-twinkle-1 {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.22);
+  }
+}
+@keyframes luhan-twinkle-2 {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.15);
+  }
+}
+@keyframes luhan-twinkle-3 {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.08);
+  }
+}
+@keyframes luhan-twinkle-4 {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.82);
+  }
+  50% {
+    opacity: 0.78;
+    transform: scale(1.12);
+  }
+}
+@keyframes luhan-sit3-twinkle-1 {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+@keyframes luhan-sit3-twinkle-2 {
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: scale(0.84);
+  }
+  50% {
+    opacity: 0.92;
+    transform: scale(1.08);
+  }
+}
+@keyframes luhan-sit3-twinkle-3 {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+@keyframes luhan-sit3-twinkle-4 {
+  0%,
+  100% {
+    opacity: 0.22;
+    transform: scale(0.82);
+  }
+  50% {
+    opacity: 0.78;
+    transform: scale(1.06);
+  }
+}
+
+/* action-pat：弧线 + 光点 */
+.pet-shell[data-state="action-pat"] .pet-svg-layer.is-active .pat-mark:nth-of-type(1) {
+  animation: luhan-pat-mark-1 1.4s ease-in-out infinite;
+}
+.pet-shell[data-state="action-pat"] .pet-svg-layer.is-active .pat-mark:nth-of-type(2) {
+  animation: luhan-pat-mark-2 1.4s ease-in-out 0.18s infinite;
+}
+.pet-shell[data-state="action-pat"] .pet-svg-layer.is-active .pat-spark {
+  animation: luhan-pat-spark 1.4s ease-in-out 0.22s infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes luhan-pat-mark-1 {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes luhan-pat-mark-2 {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  50% {
+    opacity: 0.85;
+    transform: translateY(0);
+  }
+}
+@keyframes luhan-pat-spark {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+/* jump / action-jump：人物（底图）上下跳 */
+.pet-shell[data-state="jump"] .pet-svg-layer.is-active svg > image,
+.pet-shell[data-state="action-jump"] .pet-svg-layer.is-active svg > image {
+  transform-box: fill-box;
+  transform-origin: 50% 88%;
+  animation: luhan-character-jump 0.95s cubic-bezier(0.34, 1.2, 0.64, 1) infinite;
+  will-change: transform;
+}
+
+/* jump：小熊挂绳摇摆（叠加在人物跳之上） */
+.pet-shell[data-state="jump"] .pet-svg-layer.is-active g[aria-hidden="true"] > g {
+  transform-origin: 612px 988px;
+  animation: luhan-bear-swing 1.5s ease-in-out infinite;
+}
+
+@keyframes luhan-character-jump {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  18% {
+    transform: translateY(-1.5%) scale(1.01);
+  }
+  42% {
+    transform: translateY(-8%) scale(1.03);
+  }
+  58% {
+    transform: translateY(-9%) scale(1.03);
+  }
+  78% {
+    transform: translateY(-2%) scale(1.01);
+  }
+}
+
+@keyframes luhan-bear-swing {
+  0%,
+  100% {
+    transform: rotate(-12deg);
+  }
+  50% {
+    transform: rotate(12deg);
+  }
+}
+
+/* flower：整束花摇摆 + 花瓣 + 花心 */
+.pet-shell[data-state="flower"] .pet-svg-layer.is-active g[aria-hidden="true"] > g {
+  transform-origin: 696px 900px;
+  animation: luhan-flower-sway 2.6s ease-in-out infinite;
+}
+
+.pet-shell[data-state="flower"] .pet-svg-layer.is-active .flower-stem {
+  transform-origin: 696px 900px;
+  animation: luhan-flower-stem 2.6s ease-in-out infinite;
+}
+
+.pet-shell[data-state="flower"] .pet-svg-layer.is-active .flower-petal {
+  transform-box: fill-box;
+  transform-origin: 696px 790px;
+  animation: luhan-flower-petal 1.8s ease-in-out infinite;
+}
+
+.pet-shell[data-state="flower"] .pet-svg-layer.is-active .flower-petal:nth-child(2) {
+  animation-delay: 0s;
+}
+.pet-shell[data-state="flower"] .pet-svg-layer.is-active .flower-petal:nth-child(3) {
+  animation-delay: 0.12s;
+}
+.pet-shell[data-state="flower"] .pet-svg-layer.is-active .flower-petal:nth-child(4) {
+  animation-delay: 0.24s;
+}
+.pet-shell[data-state="flower"] .pet-svg-layer.is-active .flower-petal:nth-child(5) {
+  animation-delay: 0.36s;
+}
+
+.pet-shell[data-state="flower"] .pet-svg-layer.is-active .flower-center {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: luhan-flower-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes luhan-flower-sway {
+  0%,
+  100% {
+    transform: rotate(-12deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+}
+@keyframes luhan-flower-stem {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(1.06);
+  }
+}
+@keyframes luhan-flower-petal {
+  0%,
+  100% {
+    transform: rotate(-6deg) scale(1);
+  }
+  50% {
+    transform: rotate(8deg) scale(1.08);
+  }
+}
+@keyframes luhan-flower-pulse {
+  0%,
+  100% {
+    transform: scale(0.9);
+  }
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+/* bubble：三组泡泡（整组上浮，对应原 SMIL cx/cy/r/opacity） */
+.pet-shell[data-state="bubble"] .pet-svg-layer.is-active g[aria-hidden="true"] > g:nth-child(1) {
+  transform-origin: 760px 510px;
+  animation: luhan-bubble-float-1 3.2s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+.pet-shell[data-state="bubble"] .pet-svg-layer.is-active g[aria-hidden="true"] > g:nth-child(2) {
+  transform-origin: 700px 620px;
+  animation: luhan-bubble-float-2 2.7s ease-in-out 0.8s infinite;
+  will-change: transform, opacity;
+}
+.pet-shell[data-state="bubble"] .pet-svg-layer.is-active g[aria-hidden="true"] > g:nth-child(3) {
+  transform-origin: 640px 560px;
+  animation: luhan-bubble-float-3 2.3s ease-in-out 1.4s infinite;
+  will-change: transform, opacity;
+}
+
+.pet-shell[data-state="bubble"] .pet-svg-layer.is-active .pet-bubble,
+.pet-shell[data-state="bubble"] .pet-svg-layer.is-active .pet-bubble-highlight {
+  opacity: 1;
+}
+
+@keyframes luhan-bubble-float-1 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 28px) scale(0.78);
+  }
+  12% {
+    opacity: 0.7;
+  }
+  48% {
+    opacity: 0.95;
+    transform: translate(1.6%, -14%) scale(1.12);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-1.2%, -30%) scale(1.32);
+  }
+}
+@keyframes luhan-bubble-float-2 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 24px) scale(0.8);
+  }
+  15% {
+    opacity: 0.65;
+  }
+  50% {
+    opacity: 0.88;
+    transform: translate(2.2%, -13%) scale(1.14);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-1%, -26%) scale(1.28);
+  }
+}
+@keyframes luhan-bubble-float-3 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 20px) scale(0.82);
+  }
+  18% {
+    opacity: 0.55;
+  }
+  52% {
+    opacity: 0.82;
+    transform: translate(2%, -11%) scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(1%, -24%) scale(1.22);
+  }
+}

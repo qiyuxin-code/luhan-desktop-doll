@@ -21,6 +21,44 @@ else
   fi
 fi
 
+python3 - "$ICON_PNG" <<'PY'
+from collections import deque
+from pathlib import Path
+from PIL import Image
+import sys
+
+path = Path(sys.argv[1])
+img = Image.open(path).convert("RGBA")
+px = img.load()
+width, height = img.size
+queue = deque()
+seen = set()
+
+def is_background(x, y):
+    r, g, b, a = px[x, y]
+    return a > 0 and r >= 245 and g >= 245 and b >= 245
+
+for x in range(width):
+    queue.append((x, 0))
+    queue.append((x, height - 1))
+for y in range(height):
+    queue.append((0, y))
+    queue.append((width - 1, y))
+
+while queue:
+    x, y = queue.popleft()
+    if (x, y) in seen or x < 0 or y < 0 or x >= width or y >= height:
+        continue
+    seen.add((x, y))
+    if not is_background(x, y):
+        continue
+    r, g, b, a = px[x, y]
+    px[x, y] = (r, g, b, 0)
+    queue.extend(((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)))
+
+img.save(path, "PNG")
+PY
+
 rm -rf "$ICONSET"
 mkdir -p "$ICONSET"
 

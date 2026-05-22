@@ -41,9 +41,19 @@ function getBottomRightPosition() {
 
 function closeActionMenu() {
   if (actionMenuWindow && !actionMenuWindow.isDestroyed()) {
-    actionMenuWindow.close();
+    actionMenuWindow.destroy();
   }
   actionMenuWindow = null;
+}
+
+function closeSenderWindow(event) {
+  const window = BrowserWindow.fromWebContents(event.sender);
+  if (window && window !== mainWindow && !window.isDestroyed()) {
+    window.destroy();
+  }
+  if (window === actionMenuWindow) {
+    actionMenuWindow = null;
+  }
 }
 
 function getActionMenuPosition(payload) {
@@ -147,9 +157,7 @@ app.whenReady().then(() => {
 });
 
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
+  app.quit();
 });
 
 ipcMain.on("pet-drag-start", (event, payload) => {
@@ -202,10 +210,8 @@ ipcMain.on("pet-drag-end", () => {
 });
 
 ipcMain.on("pet-close", (event) => {
-  const window = BrowserWindow.fromWebContents(event.sender);
-  if (window) {
-    window.close();
-  }
+  closeActionMenu();
+  app.quit();
 });
 
 ipcMain.on("pet-show-menu", (event, payload) => {
@@ -222,16 +228,17 @@ ipcMain.on("pet-menu-select", (event, pose) => {
   if (mainWindow && !mainWindow.isDestroyed() && validPoses.includes(pose)) {
     mainWindow.webContents.send("pet-change-pose", pose);
   }
+  closeSenderWindow(event);
   closeActionMenu();
 });
 
-ipcMain.on("pet-menu-close", () => {
+ipcMain.on("pet-menu-close", (event) => {
+  closeSenderWindow(event);
   closeActionMenu();
 });
 
-ipcMain.on("pet-menu-close-pet", () => {
+ipcMain.on("pet-menu-close-pet", (event) => {
+  closeSenderWindow(event);
   closeActionMenu();
-  if (mainWindow && !mainWindow.isDestroyed()) {
-    mainWindow.close();
-  }
+  app.quit();
 });

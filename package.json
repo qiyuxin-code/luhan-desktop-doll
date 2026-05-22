@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "鹿晗桌宠桌面应用",
+  "author": "Luhan Desktop Doll",
   "main": "main.js",
   "scripts": {
     "sort:export": "node scripts/sort-export-pngs.mjs",
@@ -10,10 +11,71 @@
     "build:renderer": "esbuild ./renderer/desktop-luhan-sprites.mjs --bundle --minify --outfile=./pet-desktop.bundle.js --format=iife --platform=browser",
     "build:renderer:spine": "esbuild ./renderer/desktop-spine.mjs --bundle --minify --outfile=./pet-desktop.bundle.js --format=iife --platform=browser",
     "normalize:spine": "node scripts/normalize-spine-json.mjs",
-    "start": "npm run build:renderer && electron ."
+    "generate:icon": "bash scripts/generate-app-icon.sh",
+    "start": "npm run build:renderer && electron .",
+    "pack": "npm run generate:icon && npm run build:renderer && electron-builder --dir",
+    "dist": "npm run generate:icon && npm run build:renderer && electron-builder",
+    "dist:mac": "npm run generate:icon && npm run build:renderer && electron-builder --mac",
+    "dist:win": "npm run generate:icon && npm run build:renderer && electron-builder --win zip --x64",
+    "dist:win:installer": "npm run generate:icon && npm run build:renderer && electron-builder --win nsis --x64",
+    "dist:linux": "npm run generate:icon && npm run build:renderer && electron-builder --linux"
+  },
+  "build": {
+    "appId": "com.luhan.desktop-doll",
+    "productName": "鹿晗桌宠",
+    "icon": "build/icon.png",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "action-menu.html",
+      "pet-layout.json",
+      "pet-desktop.bundle.js",
+      "styles.css",
+      "styles/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "asar": true,
+    "mac": {
+      "category": "public.app-category.entertainment",
+      "target": [
+        "dmg",
+        "zip"
+      ]
+    },
+    "dmg": {
+      "title": "鹿晗桌宠"
+    },
+    "win": {
+      "icon": "build/icon.png",
+      "signAndEditExecutable": false,
+      "target": [
+        "zip"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerLanguages": [
+        "zh_CN",
+        "en_US"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Game"
+    }
   },
   "devDependencies": {
     "electron": "^35.7.5",
+    "electron-builder": "^25.1.8",
     "esbuild": "^0.24.2"
   },
   "dependencies": {

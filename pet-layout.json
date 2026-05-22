@@ -1,0 +1,13 @@
+{
+  "displayWidth": 200,
+  "jumpHeadroom": 0,
+  "windowSideMargin": 0,
+  "poses": {
+    "sit-stand": { "x": 0, "y": 0, "w": 2048, "h": 2048 },
+    "bubble-list": { "x": 0, "y": 0, "w": 2048, "h": 2048 },
+    "haha": { "x": 0, "y": 0, "w": 2048, "h": 2048 },
+    "xuanzhuan": { "x": 0, "y": 0, "w": 2048, "h": 2048 },
+    "flower-list": { "x": 0, "y": 0, "w": 2048, "h": 2048 },
+    "sing": { "x": 0, "y": 0, "w": 2048, "h": 2048 }
+  }
+}

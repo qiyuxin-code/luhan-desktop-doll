@@ -1,8 +1,38 @@
 # Luhan Desktop Doll
 
-鹿晗主题桌面桌宠（Electron 透明窗口）。**默认使用 `assets/*.svg` 内嵌显示 + 姿势交叉淡入**，并尽量保留你在 SVG 里加的叠加层动画（星星、泡泡、摸头等，见 `styles/luhan-svg-animations.css`）。仓库内另含 Spine 演示管线，可按需切换。
+鹿晗主题桌面桌宠（Electron 透明窗口）。安装后会出现在桌面右下角，支持拖动、右键选择动作、鼠标悬停触发默认动作。
 
-## 运行方法
+## 安装使用
+
+请根据你的电脑系统下载 `dist/` 目录里的对应安装包。
+
+### macOS
+
+下载：[鹿晗桌宠-1.0.0-arm64.dmg](./dist/鹿晗桌宠-1.0.0-arm64.dmg)
+
+1. 双击打开 `.dmg` 文件。
+2. 把「鹿晗桌宠」拖到「应用程序」。
+3. 第一次打开如果提示「无法验证开发者」，请右键应用选择「打开」。
+
+备用下载：[鹿晗桌宠-1.0.0-arm64-mac.zip](./dist/鹿晗桌宠-1.0.0-arm64-mac.zip)
+
+### Windows
+
+下载：[鹿晗桌宠-1.0.0-win.zip](./dist/鹿晗桌宠-1.0.0-win.zip)
+
+1. 下载后解压 `.zip`。
+2. 打开解压后的文件夹。
+3. 双击运行 `鹿晗桌宠.exe`。
+
+当前 `dist/` 已提供 Windows 便携版 `.zip`。如果后续生成安装版 `.exe`，可再补充安装版下载链接。
+
+## 使用演示
+
+<video src="./assets/show-example.mov" controls width="360"></video>
+
+如果上方视频无法播放，可以直接打开：[assets/show-example.mov](./assets/show-example.mov)。
+
+## 本地开发运行
 
 ```bash
 npm install
@@ -15,7 +45,46 @@ npm start
 npm run build:renderer
 ```
 
-启动后：透明置顶窗口（默认右下角）。**单击（未拖动）** 切换到下一姿势（约 380ms 淡入淡出）；**拖动** 移动窗口；**右下角 ×** 关闭。
+启动后：透明置顶窗口（默认右下角）。**拖动** 移动窗口；**右键** 打开动作列表；**右下角 ×** 关闭。
+
+## 打包成安装包（分发给他人）
+
+使用 [electron-builder](https://www.electron.build/) 生成可下载的安装包，产物在 `dist/` 目录。
+
+```bash
+npm install
+npm run dist        # 当前系统自动选择平台
+npm run dist:mac    # macOS：.dmg + .zip（Apple Silicon）
+npm run dist:win    # Windows 便携版 .zip（Mac 上可交叉编译）
+npm run dist:win:installer  # Windows 安装程序 .exe（需在 Windows 上运行）
+npm run dist:linux  # Linux：AppImage + .deb
+```
+
+**macOS 示例输出**（Apple Silicon）：
+
+| 文件 | 说明 |
+|------|------|
+| `dist/鹿晗桌宠-1.0.0-arm64.dmg` | 双击打开，把应用拖到「应用程序」 |
+| `dist/鹿晗桌宠-1.0.0-arm64-mac.zip` | 解压后直接运行 `.app` |
+
+**Windows 示例输出**：
+
+| 文件 | 说明 |
+|------|------|
+| `dist/鹿晗桌宠-1.0.0-win.zip` | 解压后运行 `鹿晗桌宠.exe`（Mac 上 `npm run dist:win` 可生成） |
+| `dist/鹿晗桌宠 Setup 1.0.0.exe` | NSIS 安装程序（需在 **Windows 电脑**上执行 `npm run dist:win:installer`） |
+
+**在 Mac（Apple Silicon）上打 Windows 包**：electron-builder 依赖的 Wine / NSIS 是 x86 程序，无法在本机生成 `.exe` 安装程序。请用 `npm run dist:win` 生成 `.zip` 便携版分发给 Windows 用户；若必须要安装程序，请在 Windows 机器或 GitHub Actions 上跑 `npm run dist:win:installer`。
+
+**首次打开（未签名时）**：macOS 可能提示「无法验证开发者」。请 **右键 → 打开**，或在「系统设置 → 隐私与安全性」里允许。若要公开发布且避免此提示，需 Apple Developer 账号对应用做 [代码签名与公证](https://www.electron.build/code-signing)。
+
+**发布到 GitHub**：可将 `dist/` 里的 `.dmg` / `.exe` / `.zip` 上传到 [GitHub Releases](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository)，供他人下载。
+
+本地快速验证（不生成安装包，只输出 `.app` 目录）：
+
+```bash
+npm run pack
+```
 
 ## 姿势资源（路线 1）
 

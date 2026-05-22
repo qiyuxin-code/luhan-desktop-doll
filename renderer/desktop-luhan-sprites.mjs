@@ -1,23 +1,73 @@
-/**
- * 鹿晗桌宠：内嵌 SVG + CSS 动画（保留 SVG 内叠加层动画，路线 1）
- * 说明：Pixi 贴图会丢掉 <animate>；Chromium 也不执行 SVG SMIL，故用 DOM + luhan-svg-animations.css
- */
-const VIEW_W = 288;
-const VIEW_H = 288;
-const CROSSFADE_MS = 380;
-const AUTO_SWITCH_MS = 6000;
-const DRAG_THRESHOLD = 6;
+import {
+  PET_DISPLAY_WIDTH,
+  applyPoseShellSize,
+  poseDisplayHeight,
+} from "./pet-layout.mjs";
 
-/** @type {{ key: string; src: string; label: string; hasOverlayAnimation?: boolean }[]} */
-const POSES = [
-  { key: "idle-sit", src: "./assets/idle-sit.svg", label: "待机" },
-  { key: "action-sing", src: "./assets/action-sing.svg", label: "唱歌", hasOverlayAnimation: true },
-  { key: "action-pat", src: "./assets/action-pat.svg", label: "摸头", hasOverlayAnimation: true },
-  { key: "action-jump", src: "./assets/action-jump.svg", label: "跳起" },
-  { key: "jump", src: "./assets/jump.svg", label: "跳跃", hasOverlayAnimation: true },
-  { key: "bubble", src: "./assets/bubble.svg", label: "泡泡", hasOverlayAnimation: true },
-  { key: "flower", src: "./assets/flower.svg", label: "拿花", hasOverlayAnimation: true },
-  { key: "sit3", src: "./assets/sit3.svg", label: "托腮", hasOverlayAnimation: true },
+const DRAG_THRESHOLD = 6;
+const FRAME_DURATION = 250; // default ms per frame
+const DEFAULT_POSE = "sit-stand";
+const DEFAULT_POSE_PAUSE_MS = 15000;
+
+const POSE_FRAME_DURATIONS = {
+  "sit-stand": 450,
+  "bubble-list": 250,
+  "flower-list": 250,
+  "haha": 250,
+  "xuanzhuan": 250,
+  "sing": 250,
+};
+
+// Frame sequences
+const SIT_STAND_FRAMES = [
+  "./assets/sit-stand/frame_1_直立.png",
+  "./assets/sit-stand/frame_2_歪头.png",
+  "./assets/sit-stand/frame_3_恢复直立.png",
+];
+
+const BUBBLE_FRAMES = [
+  "./assets/bubble-list/frame_1_准备吹气.png",
+  "./assets/bubble-list/frame_2_正在吹气.png",
+  "./assets/bubble-list/frame_3_泡泡形成.png",
+  "./assets/bubble-list/frame_4_泡泡飘走.png",
+  "./assets/bubble-list/frame_5_恢复准备.png",
+];
+
+const FLOWER_FRAMES = [
+  "./assets/flower-list/闻花动画_帧1_初始站立.png",
+  "./assets/flower-list/闻花动画_帧2_开始低头.png",
+  "./assets/flower-list/闻花动画_帧3_低头闻花.png",
+  "./assets/flower-list/闻花动画_帧4_抬头回正.png",
+  "./assets/flower-list/闻花动画_帧5_取出一朵花.png",
+  "./assets/flower-list/闻花动画_帧6_递花给我们.png",
+];
+
+const HAHA_FRAMES = [
+  "./assets/haha/手臂动画_1.png",
+  "./assets/haha/手臂动画_2.png",
+  "./assets/haha/手臂动画_3.png",
+  "./assets/haha/手臂动画_4.png",
+  "./assets/haha/手臂动画_5.png",
+  "./assets/haha/手臂动画_6.png",
+];
+const XUAN_ZHUAN_FRAMES = [
+  "./assets/xuanzhuan/frame_1_正面_0度.png",
+  "./assets/xuanzhuan/frame_2_右前方_45度.png",
+  "./assets/xuanzhuan/frame_3_右侧面_90度.png",
+  "./assets/xuanzhuan/frame_4_右后方_135度.png",
+  "./assets/xuanzhuan/frame_5_背面_180度.png",
+  "./assets/xuanzhuan/frame_6_左后方_225度.png",
+  "./assets/xuanzhuan/frame_7_左侧面_270度.png",
+  "./assets/xuanzhuan/frame_8_左前方_315度.png",
+];
+
+const SING_FRAMES = [
+  "./assets/sing/唱歌动画_帧3_mic最远.png",
+  "./assets/sing/唱歌动画_帧4_mic回拉.png",
+  "./assets/sing/唱歌动画_帧5_mic再靠近.png",
+  "./assets/sing/唱歌动画_帧6_mic再稍远.png",
+  "./assets/sing/唱歌动画_帧7_mic再最远.png",
+  "./assets/sing/唱歌动画_帧8_mic回近结束.png",
 ];
 
 function escapeHtml(raw) {
@@ -40,37 +90,13 @@ function getDesktopPet() {
   return api;
 }
 
-/** @param {HTMLElement} layer @param {string} poseKey */
-function normalizeInjectedSvg(layer, poseKey) {
-  const svg = layer.querySelector("svg");
-  if (!svg) {
-    return;
-  }
-  svg.setAttribute("width", "100%");
-  svg.setAttribute("height", "100%");
-  svg.style.display = "block";
-  svg.style.maxWidth = "100%";
-  svg.style.maxHeight = "100%";
-  svg.style.overflow = "visible";
-
-  // Chromium 不跑 SMIL；bubble 圆点上的 opacity="0" 会盖掉 CSS 动画
-  if (poseKey === "bubble") {
-    layer.querySelectorAll(".pet-bubble, .pet-bubble-highlight").forEach((el) => {
-      el.removeAttribute("opacity");
-    });
-  }
-
-  layer.querySelectorAll("animate, animateTransform").forEach((el) => el.remove());
-}
-
-/** @param {HTMLElement} layer @param {string} src @param {string} poseKey */
-async function loadSvgIntoLayer(layer, src, poseKey) {
-  const response = await fetch(src);
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status} ${src}`);
-  }
-  layer.innerHTML = await response.text();
-  normalizeInjectedSvg(layer, poseKey);
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.src = src;
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error(`加载图片失败: ${src}`));
+  });
 }
 
 async function bootstrap() {
@@ -94,6 +120,7 @@ async function bootstrap() {
   }
 
   petMount.classList.add("pet-svg-stage");
+  document.documentElement.style.setProperty("--pet-display-w", `${PET_DISPLAY_WIDTH}px`);
 
   const ipc = getDesktopPet();
   let interactionActive = false;
@@ -104,157 +131,158 @@ async function bootstrap() {
   let startScreenX = 0;
   let startScreenY = 0;
 
-  /** @type {HTMLElement[]} */
-  const layers = POSES.map((pose) => {
-    const layer = document.createElement("div");
-    layer.className = "pet-svg-layer";
-    layer.dataset.pose = pose.key;
-    layer.hidden = true;
-    layer.style.opacity = "0";
-    petMount.appendChild(layer);
-    return layer;
-  });
+  // Clear existing items in petMount and prepare Canvas
+  petMount.innerHTML = "";
+  const canvas = document.createElement("canvas");
+  canvas.style.width = "100%";
+  canvas.style.height = "100%";
+  canvas.style.display = "block";
+  petMount.appendChild(canvas);
+
+  const ctx = canvas.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  // Make canvas high-DPI crisp
+  canvas.width = PET_DISPLAY_WIDTH * dpr;
+  canvas.height = PET_DISPLAY_WIDTH * dpr;
+  ctx.scale(dpr, dpr);
+
+  // Preloading all assets
+  petButton.setAttribute("aria-label", "正在加载动画素材...");
+  const animImages = {
+    "sit-stand": [],
+    "bubble-list": [],
+    "flower-list": [],
+    "haha": [],
+    "xuanzhuan": [],
+    "sing": []
+  };
 
   try {
-    await Promise.all(
-      POSES.map((pose, index) => loadSvgIntoLayer(layers[index], pose.src, pose.key))
-    );
+    const [sitStandImgs, bubbleImgs, flowerImgs, hahaImgs, xzImgs, singImgs] = await Promise.all([
+      Promise.all(SIT_STAND_FRAMES.map(loadImage)),
+      Promise.all(BUBBLE_FRAMES.map(loadImage)),
+      Promise.all(FLOWER_FRAMES.map(loadImage)),
+      Promise.all(HAHA_FRAMES.map(loadImage)),
+      Promise.all(XUAN_ZHUAN_FRAMES.map(loadImage)),
+      Promise.all(SING_FRAMES.map(loadImage))
+    ]);
+
+    animImages["sit-stand"] = sitStandImgs;
+    animImages["bubble-list"] = bubbleImgs;
+    animImages["flower-list"] = flowerImgs;
+    animImages["haha"] = hahaImgs;
+    animImages["xuanzhuan"] = xzImgs;
+    animImages["sing"] = singImgs;
   } catch (err) {
-    console.error("[desktop-luhan] SVG 加载失败", err);
+    console.error("[desktop-luhan] 动画素材加载失败", err);
     petMount.innerHTML =
-      '<p class="pet-load-error">鹿晗 SVG 加载失败。<br /><small>请确认 assets/*.svg 存在</small></p>';
-    petButton.setAttribute("aria-label", "SVG 加载失败");
+      `<p class="pet-load-error">鹿晗 动画素材加载失败。<br /><small>${escapeHtml(err.message)}</small></p>`;
+    petButton.setAttribute("aria-label", "素材加载失败");
     return;
   }
 
-  let currentIndex = 0;
-  let fading = false;
-  let fadeElapsed = 0;
-  /** @type {HTMLElement | null} */
-  let fadeFrom = null;
-  /** @type {HTMLElement | null} */
-  let fadeTo = null;
-  let fadeRafId = 0;
-  let autoSwitchTimerId = /** @type {ReturnType<typeof setInterval> | null} */ (null);
+  let currentPose = DEFAULT_POSE;
+  let currentFrame = 0;
+  let lastFrameTime = 0;
+  let defaultPosePauseUntil = 0;
 
-  function updateAria(index) {
-    const pose = POSES[index];
-    petShell.dataset.state = pose.key;
-    petButton.setAttribute("aria-label", `当前动作：${pose.label}`);
+  function getFrameCount(pose) {
+    if (pose === "sit-stand") return 3;
+    if (pose === "bubble-list") return 5;
+    if (pose === "flower-list") return 6;
+    if (pose === "haha") return 6;
+    if (pose === "xuanzhuan") return 8;
+    if (pose === "sing") return 6;
+    return 0;
   }
 
-  /** @param {HTMLElement | null} except */
-  function hideAllExcept(except) {
-    for (const layer of layers) {
-      if (layer !== except) {
-        layer.classList.remove("is-active");
-        layer.hidden = true;
-        layer.style.opacity = "0";
-      }
+  function drawFrame(poseKey, frameIndex) {
+    const height = poseDisplayHeight(poseKey);
+    ctx.clearRect(0, 0, PET_DISPLAY_WIDTH, height);
+
+    if (poseKey === "sit-stand" || poseKey === "bubble-list" || poseKey === "flower-list" || poseKey === "haha" || poseKey === "xuanzhuan" || poseKey === "sing") {
+      const frames = animImages[poseKey];
+      if (!frames || !frames[frameIndex]) return;
+      const img = frames[frameIndex];
+      ctx.drawImage(img, 0, 0, PET_DISPLAY_WIDTH, height);
     }
   }
 
-  /** @param {number} index */
-  function showPoseImmediate(index) {
-    const layer = layers[index];
-    hideAllExcept(layer);
-    layer.hidden = false;
-    layer.classList.add("is-active");
-    layer.style.opacity = "1";
-    currentIndex = index;
-    updateAria(index);
+  function changePose(newPose) {
+    const validPoses = ["sit-stand", "bubble-list", "haha", "xuanzhuan", "flower-list", "sing"];
+    if (!validPoses.includes(newPose)) return;
+
+    currentPose = newPose;
+    currentFrame = 0;
+    lastFrameTime = 0;
+    defaultPosePauseUntil = 0;
+    petShell.dataset.state = newPose;
+    petButton.setAttribute("aria-label", `当前动作：${newPose}`);
+    applyPoseShellSize(petShell, newPose);
+
+    // Dynamic resize of canvas to match active pose aspect ratio
+    const height = poseDisplayHeight(newPose);
+    canvas.width = PET_DISPLAY_WIDTH * dpr;
+    canvas.height = height * dpr;
+    ctx.setTransform(1, 0, 0, 1, 0, 0); // reset scale transform
+    ctx.scale(dpr, dpr);
+
+    drawFrame(currentPose, currentFrame);
   }
 
-  function stopFadeRaf() {
-    if (fadeRafId) {
-      cancelAnimationFrame(fadeRafId);
-      fadeRafId = 0;
-    }
-  }
-
-  /** @param {number} time */
-  function onFadeFrame(time) {
-    if (!fadeFrom || !fadeTo || !fading) {
+  function restartDefaultPose() {
+    if (currentPose !== DEFAULT_POSE) {
       return;
     }
-    if (!fadeElapsed) {
-      fadeElapsed = time;
+    currentFrame = 0;
+    lastFrameTime = 0;
+    defaultPosePauseUntil = 0;
+    drawFrame(currentPose, currentFrame);
+  }
+
+  function animLoop(timestamp) {
+    if (!lastFrameTime) {
+      lastFrameTime = timestamp;
     }
-    const t = Math.min((time - fadeElapsed) / CROSSFADE_MS, 1);
-    fadeFrom.style.opacity = String(1 - t);
-    fadeTo.style.opacity = String(t);
-    if (t >= 1) {
-      hideAllExcept(fadeTo);
-      fadeTo.style.opacity = "1";
-      currentIndex = layers.indexOf(fadeTo);
-      fading = false;
-      fadeFrom = null;
-      fadeTo = null;
-      fadeElapsed = 0;
-      stopFadeRaf();
+
+    const elapsed = timestamp - lastFrameTime;
+    const frameCount = getFrameCount(currentPose);
+    const duration = POSE_FRAME_DURATIONS[currentPose] || FRAME_DURATION;
+
+    if (currentPose === DEFAULT_POSE && defaultPosePauseUntil) {
+      if (timestamp < defaultPosePauseUntil) {
+        requestAnimationFrame(animLoop);
+        return;
+      }
+      defaultPosePauseUntil = 0;
+      currentFrame = 0;
+      lastFrameTime = timestamp;
+      drawFrame(currentPose, currentFrame);
+      requestAnimationFrame(animLoop);
       return;
     }
-    fadeRafId = requestAnimationFrame(onFadeFrame);
-  }
 
-  /** @param {number} nextIndex */
-  function transitionTo(nextIndex) {
-    if (nextIndex === currentIndex && !fading) {
-      return;
-    }
-    if (fading) {
-      stopFadeRaf();
-      if (fadeTo) {
-        hideAllExcept(fadeTo);
-        fadeTo.style.opacity = "1";
-        fadeTo.classList.add("is-active");
-        currentIndex = layers.indexOf(fadeTo);
+    if (elapsed >= duration) {
+      if (currentPose !== DEFAULT_POSE && currentFrame >= frameCount - 1) {
+        changePose(DEFAULT_POSE);
+        requestAnimationFrame(animLoop);
+        return;
       }
-      fading = false;
-      fadeFrom = null;
-      fadeTo = null;
-      fadeElapsed = 0;
-    }
-
-    const from = layers[currentIndex];
-    const to = layers[nextIndex];
-    from.hidden = false;
-    to.hidden = false;
-    from.classList.add("is-active");
-    to.classList.add("is-active");
-    to.style.opacity = "0";
-    from.style.opacity = "1";
-
-    fadeFrom = from;
-    fadeTo = to;
-    fading = true;
-    fadeElapsed = 0;
-    updateAria(nextIndex);
-    stopFadeRaf();
-    fadeRafId = requestAnimationFrame(onFadeFrame);
-  }
-
-  function advancePose() {
-    transitionTo((currentIndex + 1) % POSES.length);
-  }
-
-  function stopAutoSwitch() {
-    if (autoSwitchTimerId) {
-      window.clearInterval(autoSwitchTimerId);
-      autoSwitchTimerId = null;
-    }
-  }
-
-  function startAutoSwitch() {
-    stopAutoSwitch();
-    autoSwitchTimerId = window.setInterval(() => {
-      if (!interactionActive && !fading) {
-        advancePose();
+      if (currentPose === DEFAULT_POSE && currentFrame >= frameCount - 1) {
+        defaultPosePauseUntil = timestamp + DEFAULT_POSE_PAUSE_MS;
+        lastFrameTime = timestamp;
+        requestAnimationFrame(animLoop);
+        return;
       }
-    }, AUTO_SWITCH_MS);
+      currentFrame = (currentFrame + 1) % frameCount;
+      drawFrame(currentPose, currentFrame);
+      lastFrameTime = timestamp - (elapsed % duration);
+    }
+
+    requestAnimationFrame(animLoop);
   }
 
-  function finishInteraction(shouldAdvance) {
+  function finishInteraction() {
     if (!interactionActive) {
       return;
     }
@@ -265,15 +293,20 @@ async function bootstrap() {
     interactionActive = false;
     interactionMoved = false;
     dragStarted = false;
-    if (shouldAdvance) {
-      advancePose();
-    }
-    startAutoSwitch();
   }
 
+  // Set up listeners
   petButton.addEventListener("dragstart", (e) => e.preventDefault());
 
+  petButton.addEventListener("mouseenter", () => {
+    restartDefaultPose();
+  });
+
   petButton.addEventListener("mousedown", (event) => {
+    if (event.button === 2) {
+      // Right click handled by contextmenu event
+      return;
+    }
     if (event.button !== 0) {
       return;
     }
@@ -285,7 +318,6 @@ async function bootstrap() {
     startScreenX = event.screenX;
     startScreenY = event.screenY;
     petShell.classList.add("dragging");
-    stopAutoSwitch();
     event.preventDefault();
   });
 
@@ -312,10 +344,25 @@ async function bootstrap() {
     if (event.button !== 0) {
       return;
     }
-    finishInteraction(!interactionMoved);
+    finishInteraction();
   });
 
-  window.addEventListener("blur", () => finishInteraction(false));
+  window.addEventListener("blur", () => finishInteraction());
+
+  // Show Electron native context menu on right click
+  petButton.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+    if (ipc && typeof ipc.showMenu === "function") {
+      ipc.showMenu(event.screenX, event.screenY);
+    }
+  });
+
+  // Listen to IPC pose changes from context menu
+  if (ipc && typeof ipc.onPoseChange === "function") {
+    ipc.onPoseChange((newPose) => {
+      changePose(newPose);
+    });
+  }
 
   closeButton?.addEventListener("click", (event) => {
     event.preventDefault();
@@ -323,8 +370,9 @@ async function bootstrap() {
     ipc?.close();
   });
 
-  showPoseImmediate(0);
-  startAutoSwitch();
+  // Initialize
+  changePose(DEFAULT_POSE);
+  requestAnimationFrame(animLoop);
 }
 
 bootstrap().catch((err) => {
